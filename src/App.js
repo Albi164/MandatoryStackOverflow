@@ -6,58 +6,29 @@ import Question from "./Question";
 import QuestionList from "./QuestionList";
 import AddQuestion from "./AddQuestion";
 import NotFound from "./NotFound";
-import axios from 'axios';
-function axiosTest() {
-    return axios.get('http://localhost:8080/questions2').then(response => {
-
-        return response.data
-    })
-}
-
 class App extends Component {
     constructor(props) {
         super(props);
-        this.gotData = false;
-        this.state = { questions: this.getData()}
+        this.handleChange = function () {
+            console.log("test")
+        }
+        this.state = { questions: [], checked: true }
         // this.handleChange = this.handleChange.bind(this);
-        this.API_URL=window.location.href;
+        this.API_URL = window.location.href;
     }
     // handleChange() {
     //     console.log("test");
     // }
-    componentDidMount() {
-        axiosTest().then(data => {
-            this.setState({
-                questions: data
-            });
-            this.gotData = true;
-        });
-    }
-    componentWillMount() {
-        axiosTest().then(data => {
-            this.setState({
-                questions: data
-            });
-            this.gotData = true;
-        });
-    }
-    storage(){
-        let data = this.state.data;
-        localStorage.setItem("data", JSON.stringify(data))
-    };
-        getData(){
-        console.log(this);
-            axiosTest().then(data => {
-                this.setState({
-                    questions: data
-                });
-                this.gotData = true;
-            });
-        this.storage()
-    }
+    async componentWillMount() {
+        //await data.
+        const response = await fetch(
+            `http://localhost:8080/questions2`
+        );
 
-
-
+        //assign to const json and set state when we receive data
+        const json = await response.json();
+        this.setState({ questions: json });
+    }
     addQuestion(text) {
         let newQuestion = {
             id: Math.floor(Math.random() * Math.floor(1000000)),
@@ -68,14 +39,21 @@ class App extends Component {
             questions: [...this.state.questions, newQuestion]
         });
     }
-    getQuestionFromId(id) {
-        return this.state.questions.find((elm) => elm.id === Number(id));
-    }
-
     filterByTopic(topic) {
         return this.state.questions.filter((elm) => elm.topic.includes(topic))
     }
-
+   
+    async getQuestionFromId(id) {
+               //await data.
+               const response = await fetch(
+                `http://localhost:8080/questions2`
+            );
+    
+            //assign to const json and set state when we receive data
+            const json = await response.json();
+            this.setState({ questions: json });
+            return this.state.questions.find((elm) => Number(elm.id) === Number(id));
+    }
     render() {
         var questions = this.state.questions;
         console.log(this.state.questions);
@@ -83,31 +61,29 @@ class App extends Component {
             <Router>
                 <div className="container">
                     <h1>StackOverflow</h1>
-
                     <Switch onChange={this.handleChange} checked={this.state.checked} >
-                        <Route exact path={'/'}
-                               render={(props) =>
-                                   <QuestionList gotData={true} {...props}
-                                                 questions={questions}
-                                                 header={'Questions Asked'}/>
-                               }
+                    </Switch>
+                    <Route exact path={'/'}
+                            render={(props) =>
+                                <QuestionList {...props}
+                                    questions={questions}
+                                    header={'Questions Asked'} />
+                            }
                         />
 
                         <Route exact path={'/questions/:id'}
-                               render={(props) => <Question {...props}
-                                                            questions={this.getQuestionFromId(props.match.params.id)}/>}
+                            render={(props) => <Question {...props}
+                                questionsID={props.match.params.id} />}
                         />
 
                         <Route exact path={'/questions/with/:topic'}
-                               render={(props) =>
-                                   <QuestionList {...props}
-                                                 questions={this.filterByTopic(props.match.params.topic)}
-                                                 header={`Questions that consist ${props.match.params.topic}`}/>}
+                            render={(props) =>
+                                <QuestionList {...props}
+                                    questions={this.filterByTopic(props.match.params.topic)}
+                                    header={`Questions that consist ${props.match.params.topic}`} />}
                         />
 
                         <Route component={NotFound} />
-                    </Switch>
-
                 </div>
             </Router>
         );
