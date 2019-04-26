@@ -9,6 +9,7 @@ class PostAnswer extends Component {
         }
     }
     render() {
+        console.log(this)
         return (
             <div style={{ padding: "10px" }}>
                 <input
@@ -17,7 +18,7 @@ class PostAnswer extends Component {
                     placeholder="This is how you start"
                     style={{ width: "200px" }}
                 />
-                <button onClick={() => this.props.state.postAnswersToDB(this.state.answers.text)}>
+                <button onClick={() => this.props.postAnswersToDB(this.state.text, this.props.originalQuestionID)}>
                     Submit answer
                 </button>
 

@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 app.use(bodyParser.json());
-
+app.use(bodyParser.urlencoded({ extended: true }));
 /****** Configuration *****/
 const port = (process.env.PORT || 8080);
 
@@ -101,17 +101,30 @@ app.get('/questions/:id', (req, res) => {
 });
 
 app.post('/questions', (req, res) => {
-    let newQuestion = req.body;
-    newQuestion.id = findNextId();
-    let question = new Questions ({
-        title: newQuestion.title,
-        description: newQuestion.description,
-        answers:newQuestion.answers
-    });
-    question.save();
-    res.json({ msg: `You have posted new question`, question: newQuestion});
+        let newQuestion = req.body;
+        // newQuestion.id = findNextId();
+        let question = new Questions ({
+            title: newQuestion.title,
+            description: newQuestion.description,
+            answers:newQuestion.answers
+        });
+        question.save();
+        res.json({ msg: `You have posted new question`, question: newQuestion});
 });
-
+app.put('/questions/:id/answers', (req, res) => {
+    let newAnswer = req.body;
+    // newQuestion.id = findNextId()
+    // let questions = new Questions({
+    //     answers: [{ text: newAnswer.answer}],
+    //     id: newAnswer.originalPostId,
+    // });
+Questions.findOneAndUpdate({_id: newAnswer.originalPostId}, {$push:{'answers':{"text":newAnswer.answer}}}, {new: true}, (err,question) => {
+        if (err) {
+            res.send(err);
+        }
+        res.json(question);
+    })
+})
 app.put('/questions/:id', (req, res)=>{
     res.json(getQuestionFromId(req.params.id));
 });

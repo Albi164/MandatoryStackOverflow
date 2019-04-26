@@ -16,7 +16,9 @@ class Question extends Component {
 
         //assign to const json and set state when we receive data
         const questionsArray = await response.json();
+
         this.setState({ currentQuestion: questionsArray.find(question => question._id === this.props.match.params.id) });
+        console.log(this.state.currentQuestion)
     }
     render() {
         // const {title, description} = this.state.currentQuestion
@@ -25,7 +27,6 @@ class Question extends Component {
         //         <Link key={elm.id} to={`/questions/with/${elm.topic}`}>{elm.topic}</Link>
         //     </li>)
         // });
-
         return (
             this.state.currentQuestion ? <div>
                     <h3>{this.state.currentQuestion.title}</h3>
@@ -45,7 +46,7 @@ class Question extends Component {
                             ))}
                     </ul>
                 <AddAnswer
-                        answerList={this.props.answerList} rating={this.props.rating}
+                    postAnswersToDB={this.props.postAnswersToDB} rating={this.props.rating} originalQuestionID={this.props.questionsID}
                 />
                         </div>
                     : null

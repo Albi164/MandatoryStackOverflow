@@ -18,7 +18,6 @@ class App extends Component {
 
         this.postDataToDB = this.postDataToDB.bind(this);
         this.postAnswersToDB = this.postAnswersToDB.bind(this);
-        this.updateRating = this.updateRating(this);
     }
     // handleChange() {
     //     console.log("test");
@@ -39,22 +38,26 @@ class App extends Component {
         fetch(`http://localhost:8080/questions`, {
             method:'post',
               body: JSON.stringify({
-                    title: title,
-                    description: description,
-                    answers: []
-                })
+                    "title": title,
+                    "description": description,
+                    "answers": []
+                }),
+            headers: new Headers({ "Content-Type": "application/json" }) // add headers
+
+    })
+            //.then(response => response.json())
+    }
+    postAnswersToDB(text, id){
+        fetch("http://localhost:8080/questions/:id/answers",{
+            method: 'put',
+            body: JSON.stringify({
+                "originalPostId": id,
+                "answer": text,
+            }),
+            headers: new Headers({ "Content-Type": "application/json" }) // add headers
 
         })
-            .then(response => response.json())
-    }
-    postAnswersToDB(text){
-        fetch(`http://localhost:8080/questions/:id`,{
-            method: 'post',
-            body: JSON.stringify({
-                text: text
-            })
-        })
-            .then(response => response.json())
+            // .then(response => response.json())
     }
     updateRating(rating, id){
         fetch(`http://localhost:8080/questions/`+id, {
@@ -63,6 +66,7 @@ class App extends Component {
                 rating: rating
             })
         })
+
             .then(response=> response.json())
             .then(response => console.log(response.json))    }
     // putDataToDB = (title,description) => {
@@ -103,7 +107,7 @@ class App extends Component {
                             render={(props) =>
                                 <QuestionList {...props}
                                     questions={questions}
-                                    header={'Questions Asked'} form={this.postDataToDB}/>
+                                    header={'Questions Asked'} postDataToDB={this.postDataToDB} form={this.postDataToDB}/>
 
 
 
@@ -112,7 +116,7 @@ class App extends Component {
 
                         <Route exact path={'/question/:id'}
                             render={(props) => <Question {...props}
-                                questionsID={props.match.params.id} answerList={this.postAnswersToDB}
+                                questionsID={props.match.params.id} myStuff={this} postAnswersToDB={this.postAnswersToDB}
                             rating={this.updateRating}/>
 
                             }

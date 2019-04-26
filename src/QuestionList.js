@@ -10,13 +10,13 @@ class QuestionsList extends Component {
             <div>
                 <h3>List of questions</h3>
                 {this.props.questions.map(el => (
-                   <Link key={el._id} to={`/question/${el._id}`}><p>Title: {el.title},<br></br>
+                   <Link key={el._id} to={"/question/"+el._id}><p>Title: {el.title},<br></br>
                         Description: {el.description},<br></br>
                        </p></Link>
                 ))}
 
                 <AddQuestion
-                    form={this.props.form}/>
+                    postDataToDB={this.props.postDataToDB} form={this.props.form}/>
             </div>
 
         );
