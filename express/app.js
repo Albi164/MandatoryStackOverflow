@@ -35,44 +35,42 @@ db.once('open', function() {
 let questionSchema = new mongoose.Schema ({
     title: String,
     description: String,
-    topic: String,
     answers: [{
-        header: String,
         text: String,
         ranking: Number,}]
 });
 
 let Questions = new mongoose.model('Questions', questionSchema);
 
-const questions =[
-    {
-        title: "Starting with GitHub",
-        description: "Hey guys, I'm very new in the internet, how do I start with github?",
-        topic: "Github"
-
-    },
-    {
-        title: "Making Pacman in android",
-        description: "Hey guys, I'm new in android, do you know any helpful tutorial?",
-        topic:"Java"
-    },
-    {
-        title: "How to set up Umbraco",
-        description: "Does any of you have idea how to set up Umbraco CMS?",
-        topic: "Umbraco"
-    }
-];
-questions.forEach((r)=>{
-    let questions = new Questions({
-        title: r.title,
-        description: r.description,
-        topic: r.topic,
-        answers: r.answers
-    })
-    questions.save((err, questions)=>{
-        if (err) return console.error(err);
-    })
-});
+// const questions =[
+//     {
+//         title: "Starting with GitHub",
+//         description: "Hey guys, I'm very new in the internet, how do I start with github?",
+//         topic: "Github"
+//
+//     },
+//     {
+//         title: "Making Pacman in android",
+//         description: "Hey guys, I'm new in android, do you know any helpful tutorial?",
+//         topic:"Java"
+//     },
+//     {
+//         title: "How to set up Umbraco",
+//         description: "Does any of you have idea how to set up Umbraco CMS?",
+//         topic: "Umbraco"
+//     }
+// ];
+// questions.forEach((r)=>{
+//     let questions = new Questions({
+//         title: r.title,
+//         description: r.description,
+//         topic: r.topic,
+//         answers: r.answers
+//     })
+//     questions.save((err, questions)=>{
+//         if (err) return console.error(err);
+//     })
+// });
 
 
 /****** Helper functions *****/
@@ -105,12 +103,10 @@ app.get('/questions/:id', (req, res) => {
 app.post('/questions', (req, res) => {
     let newQuestion = req.body;
     newQuestion.id = findNextId();
-    let question = new newQuestion ({
+    let question = new Questions ({
         title: newQuestion.title,
         description: newQuestion.description,
-        topic:newQuestion.topic,
         answers:newQuestion.answers
-
     });
     question.save();
     res.json({ msg: `You have posted new question`, question: newQuestion});
@@ -120,11 +116,4 @@ app.put('/questions/:id', (req, res)=>{
     res.json(getQuestionFromId(req.params.id));
 });
 
-app.get('/questions/with/:topic', (req, res) =>{
-    console.log("hi");
-    Questions.find({topic: req.params.topic}, (err, questions) =>{
-        res.json(questions);
-        filterByTopic(req.params.topic);
-    });
-});
 app.listen(port, () => console.log(`Cooking API running on port ${port}!`));

@@ -1,24 +1,29 @@
 import React, { Component } from 'react';
-import { Route, Link, BrowserRouter as Router } from 'react-router-dom';
-import Switch from "react-switch";
+import {  BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
 import './index.css';
 import Question from "./Question";
 import QuestionList from "./QuestionList";
-import AddQuestion from "./AddQuestion";
 import NotFound from "./NotFound";
+import AddQuestion from "./AddQuestion";
+import AddAnswer from "./AddAnswer";
+import axios from "axios";
+
 class App extends Component {
     constructor(props) {
         super(props);
-        this.handleChange = function () {
-            console.log("test")
-        }
-        this.state = { questions: [], checked: true }
+
+        this.state = { questions: [] }
         // this.handleChange = this.handleChange.bind(this);
         this.API_URL = window.location.href;
+
+        this.postDataToDB = this.postDataToDB.bind(this);
+        this.postAnswersToDB = this.postAnswersToDB.bind(this);
+        this.updateRating = this.updateRating(this);
     }
     // handleChange() {
     //     console.log("test");
     // }
+
     async componentWillMount() {
         //await data.
         const response = await fetch(
@@ -29,19 +34,51 @@ class App extends Component {
         const json = await response.json();
         this.setState({ questions: json });
     }
-    addQuestion(text) {
-        let newQuestion = {
-            id: Math.floor(Math.random() * Math.floor(1000000)),
-            task: text,
-            done: false
-        };
-        this.setState({
-            questions: [...this.state.questions, newQuestion]
-        });
+
+    postDataToDB(title, description){
+        fetch(`http://localhost:8080/questions`, {
+            method:'post',
+              body: JSON.stringify({
+                    title: title,
+                    description: description,
+                    answers: []
+                })
+
+        })
+            .then(response => response.json())
     }
-    filterByTopic(topic) {
-        return this.state.questions.filter((elm) => elm.topic.includes(topic))
+    postAnswersToDB(text){
+        fetch(`http://localhost:8080/questions`,{
+            method: 'post',
+            body: JSON.stringify({
+                text: text
+            })
+        })
+            .then(response => response.json())
     }
+    updateRating(rating){
+        fetch(`http://localhost:8080/questions/:id`, {
+            method:'post',
+            body:JSON.stringify({
+                rating: rating
+            })
+        })
+            .then(response=> response.json())
+    }
+    // putDataToDB = (title,description) => {
+    //     let currentIds = this.state.questions.map(questions => questions.id);
+    //     let idToBeAdded = 0;
+    //     while (currentIds.includes(idToBeAdded)) {
+    //         ++idToBeAdded;
+    //     }
+    //
+    //     axios.post("http://localhost:8080/questions2", {
+    //         id: idToBeAdded,
+    //         title: title,
+    //         description: description
+    //     });
+    // };
+
    
     async getQuestionFromId(id) {
                //await data.
@@ -61,29 +98,28 @@ class App extends Component {
             <Router>
                 <div className="container">
                     <h1>StackOverflow</h1>
-                    <Switch onChange={this.handleChange} checked={this.state.checked} >
-                    </Switch>
+                    <Switch>
                     <Route exact path={'/'}
                             render={(props) =>
                                 <QuestionList {...props}
                                     questions={questions}
-                                    header={'Questions Asked'} />
+                                    header={'Questions Asked'} form={this.postDataToDB}/>
+
+
+
                             }
                         />
 
-                        <Route exact path={'/questions/:id'}
+                        <Route exact path={'/question/:id'}
                             render={(props) => <Question {...props}
-                                questionsID={props.match.params.id} />}
-                        />
+                                questionsID={props.match.params.id} answerList={this.postAnswersToDB}
+                            rating={this.updateRating}/>
 
-                        <Route exact path={'/questions/with/:topic'}
-                            render={(props) =>
-                                <QuestionList {...props}
-                                    questions={this.filterByTopic(props.match.params.topic)}
-                                    header={`Questions that consist ${props.match.params.topic}`} />}
+                            }
                         />
 
                         <Route component={NotFound} />
+                    </Switch>
                 </div>
             </Router>
         );
