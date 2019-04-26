@@ -48,7 +48,7 @@ class App extends Component {
             .then(response => response.json())
     }
     postAnswersToDB(text){
-        fetch(`http://localhost:8080/questions`,{
+        fetch(`http://localhost:8080/questions/:id`,{
             method: 'post',
             body: JSON.stringify({
                 text: text
@@ -56,15 +56,15 @@ class App extends Component {
         })
             .then(response => response.json())
     }
-    updateRating(rating){
-        fetch(`http://localhost:8080/questions/:id`, {
-            method:'post',
+    updateRating(rating, id){
+        fetch(`http://localhost:8080/questions/`+id, {
+            method:'put',
             body:JSON.stringify({
                 rating: rating
             })
         })
             .then(response=> response.json())
-    }
+            .then(response => console.log(response.json))    }
     // putDataToDB = (title,description) => {
     //     let currentIds = this.state.questions.map(questions => questions.id);
     //     let idToBeAdded = 0;

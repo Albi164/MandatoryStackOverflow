@@ -38,6 +38,9 @@ class Question extends Component {
                                     <span style={{ color: "gray" }}> </span> {dat.text} <br />
                                     {/*<span style={{ color: "gray" }}> description: </span> {dat.description} <br />*/}
                                     {dat.message}
+                                    <button onClick={() => this.props.state.updateRating(this.state.answers.rating)}>
+                                        Increase rating
+                                    </button>
                                 </li>
                             ))}
                     </ul>

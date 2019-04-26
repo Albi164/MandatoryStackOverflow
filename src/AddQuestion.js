@@ -26,7 +26,7 @@ class AddQuestion extends Component {
                     style={{ width: "200px" }}
                 />
                 <button onClick={() => this.props.postDataToDB(this.state.title, this.state.description )}>
-                    ADD
+                    Submit
                 </button>
             </div>
         );

@@ -18,11 +18,9 @@ class PostAnswer extends Component {
                     style={{ width: "200px" }}
                 />
                 <button onClick={() => this.props.state.postAnswersToDB(this.state.answers.text)}>
-                    ADD
+                    Submit answer
                 </button>
-                <button onClick={() => this.props.state.updateRating(this.state.answers.rating)}>
 
-                </button>
             </div>
         );
     }
