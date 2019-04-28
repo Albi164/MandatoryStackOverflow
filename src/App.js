@@ -60,15 +60,18 @@ class App extends Component {
             // .then(response => response.json())
     }
     updateRating(rating, id){
-        fetch(`http://localhost:8080/questions/`+id, {
+        fetch('http://localhost:8080/questions/:id/rating', {
             method:'put',
             body:JSON.stringify({
-                rating: rating
-            })
+                "originalPostId": id,
+                "rating": rating++
+            }),
+            headers: new Headers({ "Content-Type": "application/json" }) // add headers
         })
 
-            .then(response=> response.json())
-            .then(response => console.log(response.json))    }
+            // .then(response=> response.json())
+        //             // .then(response => console.log(response.json))
+    }
     // putDataToDB = (title,description) => {
     //     let currentIds = this.state.questions.map(questions => questions.id);
     //     let idToBeAdded = 0;
@@ -116,8 +119,8 @@ class App extends Component {
 
                         <Route exact path={'/question/:id'}
                             render={(props) => <Question {...props}
-                                questionsID={props.match.params.id} myStuff={this} postAnswersToDB={this.postAnswersToDB}
-                            rating={this.updateRating}/>
+                                questionsID={props.match.params.id} postAnswersToDB={this.postAnswersToDB}
+                            updateRating={this.updateRating.bind(this)}/>
 
                             }
                         />

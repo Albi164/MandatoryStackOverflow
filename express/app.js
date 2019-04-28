@@ -125,6 +125,16 @@ Questions.findOneAndUpdate({_id: newAnswer.originalPostId}, {$push:{'answers':{"
         res.json(question);
     })
 })
+app.put('/questions/:id/rating', (req, res) => {
+    let newRating = req.body;
+    Question.findOneAndUpdate({_id: newRating.originalPostId, "answers._id": newRating.answerId }, {'$inc': {rating: 1}}, {new: true}, (err,question) => {
+        if (err) {
+            res.send(err);
+        }
+        res.json(question);
+    })
+
+})
 app.put('/questions/:id', (req, res)=>{
     res.json(getQuestionFromId(req.params.id));
 });

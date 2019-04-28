@@ -8,6 +8,7 @@ class Question extends Component {
         super(props);
         this.state = {questions:[]}
     }
+
     async componentWillMount() {
         //await data.
         const response = await fetch(
@@ -20,7 +21,9 @@ class Question extends Component {
         this.setState({ currentQuestion: questionsArray.find(question => question._id === this.props.match.params.id) });
         console.log(this.state.currentQuestion)
     }
+
     render() {
+        console.log(this.props)
         // const {title, description} = this.state.currentQuestion
         //  this.state.questions.forEach((elm) => {
         //     list.push(<li key={elm.id}>
@@ -37,16 +40,16 @@ class Question extends Component {
                             : this.state.currentQuestion.answers.map(dat => (
                                 <li style={{ padding: "10px" }} key={this.state.currentQuestion.message}>
                                     <span style={{ color: "gray" }}> </span> {dat.text} <br />
-                                    {/*<span style={{ color: "gray" }}> description: </span> {dat.description} <br />*/}
+                                    <span style={{ color: "gray" }}> </span> {dat.rating} <br />
                                     {dat.message}
-                                    <button onClick={() => this.props.state.updateRating(this.state.answers.rating)}>
+                                    <button onClick={() => this.props.updateRating(this.state.rating, this.props.questionID)}>
                                         Increase rating
                                     </button>
                                 </li>
                             ))}
                     </ul>
                 <AddAnswer
-                    postAnswersToDB={this.props.postAnswersToDB} rating={this.props.rating} originalQuestionID={this.props.questionsID}
+                    postAnswersToDB={this.props.postAnswersToDB} originalQuestionID={this.props.questionsID}
                 />
                         </div>
                     : null
