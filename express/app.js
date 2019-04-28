@@ -118,7 +118,7 @@ app.put('/questions/:id/answers', (req, res) => {
     //     answers: [{ text: newAnswer.answer}],
     //     id: newAnswer.originalPostId,
     // });
-Questions.findOneAndUpdate({_id: newAnswer.originalPostId}, {$push:{'answers':{"text":newAnswer.answer}}}, {new: true}, (err,question) => {
+Questions.findOneAndUpdate({_id: newAnswer.originalPostId}, {$push:{'answers':{"text":newAnswer.answer,"ranking":0}}}, {new: true}, (err,question) => {
         if (err) {
             res.send(err);
         }
@@ -127,7 +127,8 @@ Questions.findOneAndUpdate({_id: newAnswer.originalPostId}, {$push:{'answers':{"
 })
 app.put('/questions/:id/rating', (req, res) => {
     let newRating = req.body;
-    Question.findOneAndUpdate({_id: newRating.originalPostId, "answers._id": newRating.answerId }, {'$inc': {rating: 1}}, {new: true}, (err,question) => {
+    let rankingIncrease = newRating.ranking+1;
+        Questions.findOneAndUpdate({_id: newRating.originalPostId, "answers._id": newRating.originalAnswerId }, {'$set': {$elemMatch:newRating.originalPostId,"answers.$":[{$elemMatch:newRating.originalAnswerId, text:newRating.text, ranking: rankingIncrease}]}}, {new: true}, (err,question) => {
         if (err) {
             res.send(err);
         }
@@ -135,6 +136,7 @@ app.put('/questions/:id/rating', (req, res) => {
     })
 
 })
+
 app.put('/questions/:id', (req, res)=>{
     res.json(getQuestionFromId(req.params.id));
 });

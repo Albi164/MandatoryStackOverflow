@@ -59,12 +59,14 @@ class App extends Component {
         })
             // .then(response => response.json())
     }
-    updateRating(rating, id){
+    updateRating(ranking, id, originalPostId, text){
         fetch('http://localhost:8080/questions/:id/rating', {
             method:'put',
             body:JSON.stringify({
-                "originalPostId": id,
-                "rating": rating++
+                "originalAnswerId": id,
+                "ranking": parseInt(ranking),
+                "originalPostId":originalPostId,
+                "text":text,
             }),
             headers: new Headers({ "Content-Type": "application/json" }) // add headers
         })

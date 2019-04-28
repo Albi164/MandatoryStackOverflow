@@ -23,7 +23,7 @@ class Question extends Component {
     }
 
     render() {
-        console.log(this.props)
+        console.log(this)
         // const {title, description} = this.state.currentQuestion
         //  this.state.questions.forEach((elm) => {
         //     list.push(<li key={elm.id}>
@@ -40,9 +40,10 @@ class Question extends Component {
                             : this.state.currentQuestion.answers.map(dat => (
                                 <li style={{ padding: "10px" }} key={this.state.currentQuestion.message}>
                                     <span style={{ color: "gray" }}> </span> {dat.text} <br />
-                                    <span style={{ color: "gray" }}> </span> {dat.rating} <br />
+                                    <span style={{ color: "gray" }}> </span> {dat.ranking} <br />
+
                                     {dat.message}
-                                    <button onClick={() => this.props.updateRating(this.state.rating, this.props.questionID)}>
+                                    <button onClick={() => this.props.updateRating(dat.ranking, dat._id, this.state.currentQuestion._id, dat.text)}>
                                         Increase rating
                                     </button>
                                 </li>
