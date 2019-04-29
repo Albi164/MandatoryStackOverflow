@@ -141,4 +141,4 @@ app.put('/questions/:id', (req, res)=>{
     res.json(getQuestionFromId(req.params.id));
 });
 
-app.listen(port, () => console.log(`Cooking API running on port ${port}!`));
+app.listen(port, () => console.log(`Question API running on port ${port}!`));
